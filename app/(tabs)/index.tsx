@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Circle, Svg } from 'react-native-svg';
 
 const WEEK_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -69,9 +69,11 @@ export default function HomeScreen() {
             fill="none"
           />
         </Svg>
-        <View style={styles.progressTextContainer} pointerEvents="none">
-          <Text style={styles.progressText}>16 hours</Text>
-          <Text style={styles.editGoalLabel}>Edit goal</Text>
+        <View style={styles.progressTextContainer}>
+          <Text style={styles.progressText} pointerEvents="none">16 hours</Text>
+          <TouchableOpacity onPress={() => setShowGoalModal(true)}>
+            <Text style={styles.editGoalLabel}>Edit goal</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -83,32 +85,55 @@ export default function HomeScreen() {
         <Text style={styles.fastingButtonText}>{isFasting ? 'End Fasting' : 'Start Fasting'}</Text>
       </TouchableOpacity>
 
-      {/* Edit Goal button */}
-      <TouchableOpacity style={styles.editGoalButton} onPress={() => setShowGoalModal(true)}>
-        <Text style={styles.editGoalText}>Edit Goal</Text>
-      </TouchableOpacity>
-
       {/* Goal Modal */}
-      <Modal visible={showGoalModal} transparent animationType="slide">
+      <Modal
+        visible={showGoalModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowGoalModal(false)}
+      >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Change fast goal</Text>
-            <FlatList
-              data={FAST_GOALS}
-              keyExtractor={item => item.toString()}
-              horizontal
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.goalOption, fastGoal === item && styles.selectedGoal]}
-                  onPress={() => { setFastGoal(item); setShowGoalModal(false); }}
-                >
-                  <Text style={styles.goalText}>{item} hours</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity onPress={() => setShowGoalModal(false)}>
-              <Text style={styles.closeModal}>Close</Text>
-            </TouchableOpacity>
+          <View style={styles.bottomSheet}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Change fast goal</Text>
+              <TouchableOpacity onPress={() => setShowGoalModal(false)}>
+                <Text style={styles.closeButton}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.goalsGrid}>
+              <View style={[styles.goalCard, { backgroundColor: '#7c3aed' }]}> 
+                <Text style={styles.goalLabel}>Circadian{"\n"}Rhythm TRF</Text>
+                <Text style={styles.goalHours}>13 <Text style={styles.goalHoursUnit}>hours</Text></Text>
+                <Text style={styles.infoIcon}>i</Text>
+              </View>
+              <View style={[styles.goalCard, { backgroundColor: '#f43f5e' }]}> 
+                <Text style={styles.goalLabel}>16:8{"\n"}TRF</Text>
+                <Text style={styles.goalHours}>16 <Text style={styles.goalHoursUnit}>hours</Text></Text>
+                <Text style={styles.infoIcon}>i</Text>
+              </View>
+              <View style={[styles.goalCard, { backgroundColor: '#15803d' }]}> 
+                <Text style={styles.goalLabel}>18:6{"\n"}TRF</Text>
+                <Text style={styles.goalHours}>18 <Text style={styles.goalHoursUnit}>hours</Text></Text>
+                <Text style={styles.infoIcon}>i</Text>
+              </View>
+              <View style={[styles.goalCard, { backgroundColor: '#f59e42' }]}> 
+                <Text style={styles.goalLabel}>20:4{"\n"}TRF</Text>
+                <Text style={styles.goalHours}>20 <Text style={styles.goalHoursUnit}>hours</Text></Text>
+                <Text style={styles.infoIcon}>i</Text>
+              </View>
+              <View style={[styles.goalCard, { backgroundColor: '#2563eb' }]}> 
+                <Text style={styles.goalLabel}>36-Hour{"\n"}Fast</Text>
+                <Text style={styles.goalHours}>36 <Text style={styles.goalHoursUnit}>hours</Text></Text>
+                <Text style={styles.infoIcon}>i</Text>
+              </View>
+              <View style={[styles.goalCard, { backgroundColor: '#6b7280' }]}> 
+                <Text style={styles.goalLabel}>Custom{"\n"}Fast</Text>
+                <Text style={styles.goalHours}>1-168 <Text style={styles.goalHoursUnit}>hours</Text></Text>
+                <Text style={styles.infoIcon}>i</Text>
+              </View>
+            </View>
+            <Text style={styles.presetsTitle}>Your Presets <Text style={styles.zeroPlus}>Zero+</Text></Text>
+            <View style={styles.presetCard}><Text style={styles.plusSign}>+</Text></View>
           </View>
         </View>
       </Modal>
@@ -159,13 +184,99 @@ const styles = StyleSheet.create({
   startButton: { backgroundColor: '#b0003a' },
   endButton: { backgroundColor: '#888' },
   fastingButtonText: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
-  editGoalButton: { marginTop: 8, padding: 8 },
-  editGoalText: { color: '#b0003a', fontSize: 16, fontWeight: '600' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.2)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: '#fff', borderRadius: 16, padding: 24, width: '80%', alignItems: 'center' },
-  modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 16 },
-  goalOption: { padding: 16, margin: 8, borderRadius: 12, backgroundColor: '#eee' },
-  selectedGoal: { backgroundColor: '#b0003a' },
-  goalText: { fontSize: 18, color: '#222' },
-  closeModal: { marginTop: 16, color: '#b0003a', fontWeight: 'bold', fontSize: 16 },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    minHeight: 400,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    fontSize: 28,
+    color: '#888',
+  },
+  goalsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  goalCard: {
+    width: '30%',
+    aspectRatio: 0.8,
+    borderRadius: 16,
+    marginBottom: 16,
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  goalLabel: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  goalHours: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
+  goalHoursUnit: {
+    fontSize: 14,
+    fontWeight: 'normal',
+  },
+  infoIcon: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    color: '#fff',
+    fontSize: 18,
+    opacity: 0.8,
+  },
+  presetsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  zeroPlus: {
+    backgroundColor: '#f43f5e',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    marginLeft: 4,
+  },
+  presetCard: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: '#ededed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  plusSign: {
+    fontSize: 36,
+    color: '#888',
+    fontWeight: 'bold',
+  },
 });
