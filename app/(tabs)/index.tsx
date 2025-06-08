@@ -26,41 +26,52 @@ export default function HomeScreen() {
         {WEEK_DAYS.map((day, idx) => (
           <View key={day} style={styles.weekDayContainer}>
             <Text style={[styles.weekDay, fastedDays.includes(idx) && styles.fastedDay]}>{day}</Text>
+            <View
+              style={[styles.dayCircle, fastedDays.includes(idx) ? styles.fastedDayCircle : styles.nonFastedDayCircle]}
+            />
           </View>
         ))}
       </View>
 
-      {/* Circular progress bar (Zero style) */}
+      {/* Circular progress bar (Zero style, larger and thicker) */}
       <View style={styles.progressContainer}>
-        <Svg width={240} height={240}>
+        <Svg width={308} height={308}>
           {/* Outer background ring */}
           <Circle
-            cx={120}
-            cy={120}
-            r={110}
+            cx={154}
+            cy={154}
+            r={124}
             stroke="#ececec"
-            strokeWidth={18}
+            strokeWidth={54}
             fill="none"
           />
-          {/* Progress ring */}
+          {/* Progress ring (optional, can be 0 for now) */}
           <Circle
-            cx={120}
-            cy={120}
-            r={110}
+            cx={154}
+            cy={154}
+            r={124}
             stroke="#b0003a"
-            strokeWidth={18}
+            strokeWidth={54}
             fill="none"
-            strokeDasharray={2 * Math.PI * 110}
-            strokeDashoffset={(1 - progress) * 2 * Math.PI * 110}
+            strokeDasharray={2 * Math.PI * 124}
+            strokeDashoffset={2 * Math.PI * 124}
             strokeLinecap="round"
             rotation="-90"
-            origin="120,120"
+            origin="154,154"
+          />
+          {/* Inner thin circle (centered in border, more visible color) */}
+          <Circle
+            cx={154}
+            cy={154}
+            r={124}
+            stroke="#d1cfd4"
+            strokeWidth={1.5}
+            fill="none"
           />
         </Svg>
         <View style={styles.progressTextContainer} pointerEvents="none">
-          <Text style={styles.sinceText}>SINCE LAST FAST</Text>
-          <Text style={styles.progressText}>{isFasting ? `${progress * fastGoal}` : `0`}<Text style={styles.unitText}>h</Text></Text>
-          <Text style={styles.editGoalLabel}>EDIT {fastGoal}H GOAL</Text>
+          <Text style={styles.progressText}>16 hours</Text>
+          <Text style={styles.editGoalLabel}>Edit goal</Text>
         </View>
       </View>
 
@@ -107,16 +118,43 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#faf7fa', alignItems: 'center', paddingTop: 40 },
-  weekRow: { flexDirection: 'row', justifyContent: 'space-between', width: '90%', marginBottom: 24 },
+  weekRow: { flexDirection: 'row', justifyContent: 'space-between', width: '90%', marginBottom: 24, marginTop: 16 },
   weekDayContainer: { flex: 1, alignItems: 'center' },
   weekDay: { fontSize: 16, color: '#888', fontWeight: '600' },
   fastedDay: { color: '#b0003a', fontWeight: 'bold' },
-  progressContainer: { alignItems: 'center', justifyContent: 'center', marginBottom: 24, marginTop: 32 },
-  progressTextContainer: { position: 'absolute', top: 0, left: 0, width: 240, height: 240, alignItems: 'center', justifyContent: 'center' },
-  sinceText: { color: '#888', fontSize: 14, letterSpacing: 1, marginBottom: 2 },
-  progressText: { fontSize: 48, fontWeight: 'bold', color: '#222', textAlign: 'center' },
-  unitText: { fontSize: 24, color: '#222', fontWeight: 'bold' },
-  editGoalLabel: { color: '#b0003a', fontWeight: 'bold', fontSize: 15, marginTop: 2, letterSpacing: 1 },
+  dayCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginTop: 4,
+    borderWidth: 5,
+    backgroundColor: 'transparent',
+  },
+  fastedDayCircle: {
+    borderColor: '#b0003a',
+  },
+  nonFastedDayCircle: {
+    borderColor: '#ede9ee',
+  },
+  progressContainer: {
+    width: 352,
+    height: 352,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 32,
+    marginTop: 64,
+  },
+  progressTextContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 352,
+    height: 352,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  progressText: { fontSize: 36, fontWeight: 'bold', color: '#222', textAlign: 'center', marginBottom: 8 },
+  editGoalLabel: { color: '#b0003a', fontWeight: 'bold', fontSize: 18, letterSpacing: 1 },
   fastingButton: { width: '80%', padding: 16, borderRadius: 32, alignItems: 'center', marginVertical: 16 },
   startButton: { backgroundColor: '#b0003a' },
   endButton: { backgroundColor: '#888' },
